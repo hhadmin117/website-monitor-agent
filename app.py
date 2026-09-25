@@ -28,6 +28,7 @@ try:
     if api_key:
         st.success("Found key in st.secrets")
 except Exception as e:
+    st.write("keys length:", st.secrets.keys().length)
     st.warning(f"Could not read st.secrets: {e}")
 
 # Fallback to environment
