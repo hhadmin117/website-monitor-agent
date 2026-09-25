@@ -86,5 +86,5 @@ if run_button:
 st.divider()
 st.caption(
     "Built with the OpenAI Agents SDK + BeautifulSoup. "
-    "Requires OPENAI_API_KEY in your environment or .env file."
+    "Requires OPENAI_API_KEY in your environment or .env file. V1.01 - 09-25-26 0920"
 )
