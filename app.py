@@ -105,4 +105,4 @@ if "last_output" in st.session_state:
     )
 
 st.divider()
-st.caption("Built with the OpenAI Agents SDK + BeautifulSoup.")
+st.caption("Built with the OpenAI Agents SDK + BeautifulSoup. App v1.01, 09-25-26 1832")
