@@ -21,8 +21,7 @@ st.subheader("🔑 Debug Info")
 api_key = None
 
 # Try Streamlit secrets
-try:
-    st.write("keys length:", st.secrets.keys().length)
+try:    
     st.write("Secrets available:", list(st.secrets.keys()))
     api_key = st.secrets.get("OPENAI_API_KEY")
     if api_key:
