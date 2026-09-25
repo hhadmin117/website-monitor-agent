@@ -45,12 +45,10 @@ st.markdown(
     "missing titles, slow responses, and other issues."
 )
 
-default_sites = """python.org
-github.com
-openai.com
-https://httpstat.us/404
-https://httpstat.us/500
-example.com
+default_sites = """highcalgames.com
+python.org
+highcalharding.com
+zonestalkers.com
 """
 
 sites_input = st.text_area(
