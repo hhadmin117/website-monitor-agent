@@ -68,5 +68,5 @@ st.divider()
 st.caption(
     "Built with the OpenAI Agents SDK + BeautifulSoup. "
     "Requires OPENAI_API_KEY in your environment or .env file."
-    "App v1.02 09-25-26"
+    "\nApp v1.02 09-25-26"
 )
