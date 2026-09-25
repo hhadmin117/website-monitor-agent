@@ -6,7 +6,7 @@ import streamlit as st
 from agent import run_monitor, log_results
 
 st.set_page_config(
-    page_title="Website Monitor Agent",
+    page_title="Website Monitor Agent, v1.02 09-25-26",
     page_icon="🔍",
     layout="centered",
 )
