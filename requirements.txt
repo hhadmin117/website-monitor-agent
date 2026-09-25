@@ -1,0 +1,7 @@
+openai-agents
+requests
+beautifulsoup4
+lxml
+python-dotenv
+streamlit
+pandas
