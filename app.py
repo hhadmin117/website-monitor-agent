@@ -2,7 +2,26 @@
 Simple Streamlit "click to run" app for the Website Monitor Agent.
 """
 
+import os
 import streamlit as st
+
+# -------------------------------------------------
+# 1. Load the OpenAI key as early as possible
+# -------------------------------------------------
+# First try Streamlit secrets (for Community Cloud)
+try:
+    if "OPENAI_API_KEY" in st.secrets:
+        os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
+except Exception:
+    pass
+
+# Also support local .env file
+from dotenv import load_dotenv
+load_dotenv()
+
+# -------------------------------------------------
+# 2. Now import the agent (after the key is set)
+# -------------------------------------------------
 from agent import run_monitor, log_results
 
 st.set_page_config(
@@ -19,12 +38,12 @@ st.markdown(
 )
 
 # Default example sites
-default_sites = """
-highcalgames.com
-hicalgames.com
-https://www.highcalgames.com/kb.html
-highcalharding.com
-https://store.steampowered.com/app/4724340/Zone_Stalkers/
+default_sites = """python.org
+github.com
+openai.com
+https://httpstat.us/404
+https://httpstat.us/500
+example.com
 """
 
 sites_input = st.text_area(
@@ -68,5 +87,4 @@ st.divider()
 st.caption(
     "Built with the OpenAI Agents SDK + BeautifulSoup. "
     "Requires OPENAI_API_KEY in your environment or .env file."
-    "\nApp v1.02 09-25-26"
 )
