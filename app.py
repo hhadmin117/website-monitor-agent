@@ -8,16 +8,45 @@ import streamlit as st
 # -------------------------------------------------
 # 1. Load the OpenAI key as early as possible
 # -------------------------------------------------
-# First try Streamlit secrets (for Community Cloud)
-try:
-    if "OPENAI_API_KEY" in st.secrets:
-        os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
-except Exception:
-    pass
+def load_openai_key():
+    """Load OpenAI API key from Streamlit secrets or .env file"""
+    
+    key = None
+    source = None
+    
+    # First try Streamlit secrets (for Community Cloud)
+    try:
+        if "OPENAI_API_KEY" in st.secrets:
+            key = st.secrets["OPENAI_API_KEY"]
+            source = "Streamlit Secrets"
+    except Exception as e:
+        pass
+    
+    # Fallback to environment variable / .env file
+    if not key:
+        from dotenv import load_dotenv
+        load_dotenv()
+        key = os.environ.get("OPENAI_API_KEY")
+        if key:
+            source = "Environment / .env file"
+    
+    return key, source
 
-# Also support local .env file
-from dotenv import load_dotenv
-load_dotenv()
+
+# Load the key immediately
+api_key, key_source = load_openai_key()
+
+if api_key:
+    os.environ["OPENAI_API_KEY"] = api_key
+    # Also set it the way the Agents SDK likes
+    try:
+        from agents import set_default_openai_key
+        set_default_openai_key(api_key)
+    except Exception:
+        pass
+else:
+    st.error("❌ No OpenAI API Key found!")
+    st.stop()
 
 # -------------------------------------------------
 # 2. Now import the agent (after the key is set)
@@ -36,6 +65,10 @@ st.markdown(
     "The AI agent will check each landing page for blank content, errors, "
     "missing titles, slow responses, and other issues."
 )
+
+# Show key status (first 20 characters only for security)
+masked_key = api_key[:20] + "..." if api_key and len(api_key) > 20 else "Not found"
+st.caption(f"🔑 API Key loaded from: **{key_source}** | Starts with: `{masked_key}`")
 
 # Default example sites
 default_sites = """python.org
@@ -61,7 +94,6 @@ if run_button:
     if not sites_input.strip():
         st.warning("Please enter at least one website.")
     else:
-        # Build a clear query for the agent
         query = (
             "Please check the landing pages of these websites and report any issues "
             "(blank pages, HTTP errors, missing titles, timeouts, etc.). "
@@ -86,5 +118,5 @@ if run_button:
 st.divider()
 st.caption(
     "Built with the OpenAI Agents SDK + BeautifulSoup. "
-    "Requires OPENAI_API_KEY in your environment or .env file. V1.01 - 09-25-26 0920"
+    "Requires OPENAI_API_KEY in your environment or .env file. v1.02, 09-25-26 0927"
 )
