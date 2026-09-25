@@ -11,7 +11,16 @@ from dotenv import load_dotenv
 
 from check_tool import check_website
 
+# Load .env for local development
 load_dotenv()
+
+# Also support Streamlit Community Cloud secrets
+try:
+    import streamlit as st
+    if "OPENAI_API_KEY" in st.secrets:
+        os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
+except Exception:
+    pass
 
 LOG_DIR = Path(__file__).parent / "logs"
 LOG_DIR.mkdir(exist_ok=True)
@@ -20,7 +29,7 @@ LOG_DIR.mkdir(exist_ok=True)
 def get_agent() -> Agent:
     return Agent(
         name="Website Monitor",
-        model="gpt-4.1-nano",  # cheap & fast; change to gpt-4o or whatever you prefer
+        model="gpt-4.1-nano",          # or "gpt-4o-mini"
         instructions="""
 You are a careful website health monitoring agent.
 
