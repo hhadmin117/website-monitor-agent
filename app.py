@@ -27,8 +27,7 @@ try:
     api_key = st.secrets.get("OPENAI_API_KEY")
     if api_key:
         st.success("Found key in st.secrets")
-except Exception as e:
-    st.write("keys length:", st.secrets.keys().length)
+except Exception as e:    
     st.warning(f"Could not read st.secrets: {e}")
 
 # Fallback to environment
