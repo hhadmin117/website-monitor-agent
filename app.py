@@ -6,7 +6,7 @@ import streamlit as st
 from agent import run_monitor, log_results
 
 st.set_page_config(
-    page_title="Website Monitor Agent, v1.02 09-25-26",
+    page_title="Website Monitor Agent",
     page_icon="🔍",
     layout="centered",
 )
@@ -68,4 +68,5 @@ st.divider()
 st.caption(
     "Built with the OpenAI Agents SDK + BeautifulSoup. "
     "Requires OPENAI_API_KEY in your environment or .env file."
+    "App v1.02 09-25-26"
 )
