@@ -53,7 +53,7 @@ query = (
     "Please check the landing pages of these websites and report any issues "
     "(blank pages, HTTP errors, missing titles, timeouts, etc.). "
     "List each site and clearly mark which ones have problems:\n\n"
-    + lines[i].strip()
+    + lines[i]
 )
 i = i + 1
 st.warning(query)
