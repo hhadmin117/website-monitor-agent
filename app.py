@@ -26,7 +26,7 @@ costco.com
 """
 lines = []
 
-with open("urllist.txt", "r", encoding="utf-8") as f:
+with open("\\urllist.txt", "r", encoding="utf-8") as f:
     line = f.readline()          # reads one line
     if line:                     # skip if the file is empty
         lines.append(line.strip())
