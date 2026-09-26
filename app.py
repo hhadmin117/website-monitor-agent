@@ -44,6 +44,7 @@ st.markdown(
     "The AI agent will check each landing page for blank content, errors, "
     "missing titles, slow responses, and other issues."
 )
+""" replace the next few lines with a routine that builds this list from a text file. """
 
 default_sites = """highcalgames.com
 python.org
