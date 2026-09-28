@@ -1,8 +1,10 @@
 """
 Simple Streamlit "click to run" app for the Website Monitor Agent.
+Reads URLs from urllist.txt and adds a Download results button.
 """
 
 import streamlit as st
+from datetime import datetime
 from agent import run_monitor, log_results
 
 st.set_page_config(
@@ -12,93 +14,79 @@ st.set_page_config(
 )
 
 st.title("🔍 Website Landing Page Monitor")
-#st.markdown(
-#    "Enter one or more websites (one per line or comma-separated). "
-#    "The AI agent will check each landing page for blank content, errors, "
-#    "missing titles, slow responses, and other issues."
-#)
 
-# Default example sites
-# Replace the textbox URL list with a text file.  This way, there are no prompts and can be run once a day without intervention.
-
-default_sites = """
-costco.com
-"""
+# Read URLs from the text file
+url_file = "/mount/src/website-monitor-agent/urllist.txt"
 lines = []
 
-with open("/mount/src/website-monitor-agent/urllist.txt", "r", encoding="utf-8") as f:
-    line = f.readline()          # reads one line
-    if line:                     # skip if the file is empty
-        lines.append(line.strip())
+try:
+    with open(url_file, "r", encoding="utf-8") as f:
+        for raw in f:
+            line = raw.strip()
+            if line:
+                lines.append(line)
+except FileNotFoundError:
+    st.error(f"Could not find URL file: {url_file}")
+    st.stop()
 
-#sites_input = st.text_area(
-#    "Websites to check",
-    #value=default_sites,
-#    value=lines,
-#    height=180,
-#    help="One URL per line or separated by commas. https:// is optional.",
-#)
+if not lines:
+    st.warning("The URL file is empty.")
+    st.stop()
 
-#col1, col2 = st.columns([1, 3])
-#with col1:
-#    run_button = st.button("▶ Run Check", type="primary", use_container_width=True)
-
-i=0
-#if run_button:
-#    if not sites_input.strip():
-#        st.warning("Please enter at least one website.")
-#    else:
-        # Build a clear query for the agent
+# Build one query from all URLs in the file
 query = (
     "Please check the landing pages of these websites and report any issues "
     "(blank pages, HTTP errors, missing titles, timeouts, etc.). "
     "List each site and clearly mark which ones have problems:\n\n"
-    + lines[i]
+    + "\n".join(lines)
 )
-i = i + 1
-st.warning(query)
-        
-# + sites_input.strip()
-with st.spinner("Agent is checking the sites… this may take a moment"):
-    try:
-        output = run_monitor(query)
-        log_path = log_results(query, output)
-        
-        st.success("Check complete!")
-        st.subheader("Results")
-      #  st.markdown("/mount/src/website-monitor-agent/log.txt")
 
-        st.markdown(log_path)
+st.write("Checking these sites:")
+st.code("\n".join(lines))
 
-        st.info(f"📄 Results also written to log file:\n`{log_path}`")
-    except Exception as e:
-        st.error(f"Something went wrong: {e}")
-        st.exception(e)
+# Only run the agent once per session so Download does not re-check everything
+if "last_output" not in st.session_state:
+    with st.spinner("Agent is checking the sites… this may take a moment"):
+        try:
+            output = run_monitor(query)
+            log_path = log_results(query, output)
 
-# Show results + download button if a report exists
-if "last_output" in st.session_state:
-    st.success("Check complete!")
-    st.subheader("Results")
-    st.markdown(st.session_state["last_output"])
+            st.session_state["last_output"] = output
+            st.session_state["last_query"] = "\n".join(lines)
+            st.session_state["last_run"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            st.session_state["log_path"] = str(log_path)
+        except Exception as e:
+            st.error(f"Something went wrong: {e}")
+            st.exception(e)
+            st.stop()
 
-    report_text = (
-        "Website Landing Page Monitor Report\n"
-        f"Run time: {st.session_state.get('last_run', '')}\n"
-        "Checked sites:\n"
-        f"{st.session_state.get('last_query', '')}\n"
-        + ("-" * 40) + "\n"
-        + st.session_state["last_output"]
-        + "\n"
-    )
+st.success("Check complete!")
+st.subheader("Results")
+st.markdown(st.session_state["last_output"])
+st.info(f"📄 Results also written to log file:\n`{st.session_state.get('log_path', '')}`")
 
-    filename = f"website_check_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
+# Download button
+report_text = (
+    "Website Landing Page Monitor Report\n"
+    f"Run time: {st.session_state.get('last_run', '')}\n"
+    "Checked sites:\n"
+    f"{st.session_state.get('last_query', '')}\n"
+    + ("-" * 40) + "\n"
+    + st.session_state["last_output"]
+    + "\n"
+)
 
-    st.download_button(
-        label="⬇️ Download results",
-        data=report_text,
-        file_name=filename,
-        mime="text/plain",
-    )
+filename = f"website_check_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
+
+st.download_button(
+    label="⬇️ Download results",
+    data=report_text,
+    file_name=filename,
+    mime="text/plain",
+)
 
 st.divider()
-st.caption("Built with the OpenAI Agents SDK + BeautifulSoup.")
+st.caption(
+    "Built with the OpenAI Agents SDK + BeautifulSoup. "
+    "Requires OPENAI_API_KEY in your environment or .env file."
+)
