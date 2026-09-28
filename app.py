@@ -69,7 +69,7 @@ with st.spinner("Agent is checking the sites… this may take a moment"):
         st.subheader("Results")
         st.markdown(output)
 
-        st.markdown("/mount/src/website-monitor-agent/`{log_path}`")
+        st.markdown(log_path})
 
         st.info(f"📄 Results also written to log file:\n`{log_path}`")
     except Exception as e:
