@@ -66,9 +66,9 @@ with st.spinner("Agent is checking the sites… this may take a moment"):
         
         st.success("Check complete!")
         st.subheader("Results")
-        st.markdown("/mount/src/website-monitor-agent/log.txt")
+      #  st.markdown("/mount/src/website-monitor-agent/log.txt")
 
-      #  st.markdown(log_path)
+        st.markdown(log_path)
 
         st.info(f"📄 Results also written to log file:\n`{log_path}`")
     except Exception as e:
