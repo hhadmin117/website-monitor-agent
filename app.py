@@ -75,8 +75,30 @@ with st.spinner("Agent is checking the sites… this may take a moment"):
         st.error(f"Something went wrong: {e}")
         st.exception(e)
 
+# Show results + download button if a report exists
+if "last_output" in st.session_state:
+    st.success("Check complete!")
+    st.subheader("Results")
+    st.markdown(st.session_state["last_output"])
+
+    report_text = (
+        "Website Landing Page Monitor Report\n"
+        f"Run time: {st.session_state.get('last_run', '')}\n"
+        "Checked sites:\n"
+        f"{st.session_state.get('last_query', '')}\n"
+        + ("-" * 40) + "\n"
+        + st.session_state["last_output"]
+        + "\n"
+    )
+
+    filename = f"website_check_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
+
+    st.download_button(
+        label="⬇️ Download results",
+        data=report_text,
+        file_name=filename,
+        mime="text/plain",
+    )
+
 st.divider()
-st.caption(
-    "Built with the OpenAI Agents SDK + BeautifulSoup. "
-    "Requires OPENAI_API_KEY in your environment or .env file."
-)
+st.caption("Built with the OpenAI Agents SDK + BeautifulSoup.")
