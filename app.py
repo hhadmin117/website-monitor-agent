@@ -62,13 +62,13 @@ st.warning(query)
 with st.spinner("Agent is checking the sites… this may take a moment"):
     try:
         output = run_monitor(query)
-        log_path = log_results(query, "/mount/src/website-monitor-agent/" + output)
+        log_path = log_results(query, output)
         
         st.success("Check complete!")
         st.subheader("Results")
-        st.markdown(output)
+        st.markdown(/mount/src/website-monitor-agent/log.txt")
 
-        st.markdown(log_path)
+      #  st.markdown(log_path)
 
         st.info(f"📄 Results also written to log file:\n`{log_path}`")
     except Exception as e:
